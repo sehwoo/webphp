@@ -1,0 +1,40 @@
+
+         _ |_  ._ |_ ._
+    \/\/(/_|_)o|_)| ||_)
+               |     |
+
+web.php is an extremely lightweight PHP MVC framework originally
+inspired by _why's MVC Microframework "Camping". It soon ended up
+looking like `web.py`, so it was renamed and recoded.
+
+Example
+-------
+
+    <?php
+    require 'web.php';
+    
+    $urls = array(
+        '/(.*)' => 'Hello'
+    );
+    
+    class Hello {
+        function get($page) {
+            if (empty($page))
+                $page = "world";
+            echo "Hello {$page}!";
+        }
+    }
+    
+    run($urls);
+    
+    ?>
+
+Sharing
+-------
+web.php is licensed under a Modified MIT license. See LICENSE
+
+Todo
+----
+  - Get Views to work
+  - Get Models to work
+  - Make extendable database abstraction layer.
