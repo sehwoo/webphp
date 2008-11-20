@@ -2,8 +2,8 @@
 
 $url = substr($_SERVER['REQUEST_URI'],
 	strrpos($_SERVER['SCRIPT_NAME'], '/'));
-while(substr($url, -1) == '/') $url = substr($url, 0, -1);
-if($url=='') $url='/';
+while (substr($url, -1) == '/') $url = substr($url, 0, -1);
+if ($url=='') $url='/';
 
 // Prepares string for url regex
 function prep_reg($s) {
