@@ -7,14 +7,14 @@ if($url=='') $url='/';
 
 // Prepares string for url regex
 function prep_reg($s) {
-	return '/^' . str_replace('/', '\/', $s) . '$/';
+	return '/^'. str_replace('/', '\/', $s) .'$/';
 }
 
 function serve($c, $m, $a = array(), $e = TRUE) {
 	// $c, $m, $a, $e = controller, GET or POST, matches, eval?
 	// $e = TRUE or FALSE. TRUE => evals the statement
 	if (($m = strtolower($m)) == 'post') $a[] = '$_POST';
-	$s = $c .'::'.$m.'('. join(',', $a) .');';
+	$s = $c .'::'. $m .'('. join(',', $a) .');';
 	if ($e == TRUE) eval($s);
 	return $s;
 }
