@@ -30,18 +30,11 @@ function run($urls) {
 		// $m = matches
 
 		if (count($m) > 0) {
-			// $m includes the url that it matches
+			// $m includes the url that it matches, we dislike
 			array_shift($m);
 			foreach ($m as &$i) $i = '"'. $i .'"';
-			if (count($_POST) == 0) {
-				// No POST data. Execute `get`
-				serve($c, 'get', $m);
-				return '';
-			} elseif (count($_POST) > 0) {
-				// There is POST data. Execute `post`
-				serve($c, 'post', $m);
-				return '';
-			}
+			serve($c, (count($_POST)==0)? 'get':'post', $m);
+			return '';
 		} // else it isn't a match so go to the next item in array
 	}
 	// If the code reaches this point, there was no match
