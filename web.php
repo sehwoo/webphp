@@ -2,10 +2,8 @@
 
 $url = substr($_SERVER['REQUEST_URI'],
 	strrpos($_SERVER['SCRIPT_NAME'], '/'));
-while(substr($url, -1) == '/') {
-	$url = substr($url, 0, -1);
-}
-$url = ($url == '')? '/' : $url;
+while(substr($url, -1) == '/') $url = substr($url, 0, -1);
+if($url=='') $url='/';
 
 // Prepares string for url regex
 function prep_reg($s) {
@@ -15,13 +13,9 @@ function prep_reg($s) {
 function serve($c, $m, $a = array(), $e = TRUE) {
 	// $c, $m, $a, $e = controller, GET or POST, matches, eval?
 	// $e = TRUE or FALSE. TRUE => evals the statement
-	if (($m = strtolower($m)) == 'post') {
-		$a[] = '$_POST';
-	}
+	if (($m = strtolower($m)) == 'post') $a[] = '$_POST';
 	$s = $c .'::'.$m.'('. join(',', $a) .');';
-	if ($e == TRUE) {
-		eval($s);
-	}
+	if ($e == TRUE) eval($s);
 	return $s;
 }
 
@@ -38,9 +32,7 @@ function run($urls) {
 		if (count($m) > 0) {
 			// $m includes the url that it matches
 			array_shift($m);
-			foreach ($m as &$i) {
-				$i = '"'. $i .'"';
-			}
+			foreach ($m as &$i) $i = '"'. $i .'"';
 			if (count($_POST) == 0) {
 				// No POST data. Execute `get`
 				serve($c, 'get', $m);
