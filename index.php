@@ -8,7 +8,7 @@ $urls = array(
 class Hello {
 	function get($page) {
 		if (empty($page)) $page = "world";
-		echo "Hello {$page}!";
+		echo "Hello $page!";
 	}
 }
 
