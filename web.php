@@ -3,7 +3,7 @@
 $url = substr($_SERVER['REQUEST_URI'],
 	strrpos($_SERVER['SCRIPT_NAME'], '/'));
 while (substr($url, -1) == '/') $url = substr($url, 0, -1);
-if ($url=='') $url='/';
+if ($url == '') $url='/';
 
 // Prepares string for url regex
 function prep_reg($s) {
@@ -33,7 +33,7 @@ function run($urls) {
 			// $m includes the url that it matches, we dislike
 			array_shift($m);
 			foreach ($m as &$i) $i = '"'. $i .'"';
-			serve($c, (count($_POST)==0)? 'get':'post', $m);
+			serve($c, (count($_POST) == 0)? 'get':'post', $m);
 			return '';
 		} // else it isn't a match so go to the next item in array
 	}
