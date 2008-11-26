@@ -4,7 +4,7 @@ define('REQUEST', $_SERVER['REQUEST_URI']);
 
 $url = substr(REQUEST, strrpos(SCRIPT, '/'));
 while (substr($url, -1) == '/') $url = substr($url, 0, -1);
-if ($url == '') $url='/';
+if ($url == '') $url = '/';
 
 // $u can be either `/test` or `test`.
 function URL($u) {
@@ -12,11 +12,26 @@ function URL($u) {
 	return substr(SCRIPT, 0, strrpos(SCRIPT, '/') + 1) . $u;
 }
 
+function r($s, $b, $h) {
+	global $stat;
+	header('HTTP/1.1 '. $stat[$s]);
+	if (!empty($h)) {
+		if (is_string($h)) header($h);
+		elseif (is_array($h)) foreach ($h as $i) header($i);
+	}
+	echo $b;
+}
+
+function redirect($l) {
+	r(301, '', 'Location: '. URL($l));
+}
+
 // Prepares string for url regex
 function prep_reg($s) {
 	return '/^'. str_replace('/', '\/', $s) .'$/';
 }
 
+// Runs the method in the specified controller
 function serve($c, $m, $a = array(), $e = TRUE) {
 	// $c, $m, $a, $e = controller, GET or POST, matches, eval?
 	// $e = TRUE or FALSE. TRUE => evals the statement
