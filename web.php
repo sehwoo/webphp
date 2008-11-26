@@ -1,9 +1,16 @@
 <?php
+define('SCRIPT', $_SERVER['SCRIPT_NAME']);
+define('REQUEST', $_SERVER['REQUEST_URI']);
 
-$url = substr($_SERVER['REQUEST_URI'],
-	strrpos($_SERVER['SCRIPT_NAME'], '/'));
+$url = substr(REQUEST, strrpos(SCRIPT, '/'));
 while (substr($url, -1) == '/') $url = substr($url, 0, -1);
 if ($url == '') $url='/';
+
+// $u can be either `/test` or `test`.
+function URL($u) {
+	while ($u[0] == '/') $u = substr($u, 1, strlen($u) - 1);
+	return substr(SCRIPT, 0, strrpos(SCRIPT, '/') + 1) . $u;
+}
 
 // Prepares string for url regex
 function prep_reg($s) {
