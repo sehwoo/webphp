@@ -34,6 +34,5 @@ web.php is licensed under a Modified MIT license. See LICENSE.
 
 Todo
 ----
-  - Get Views to work
   - Get Models to work
   - Make extendable database abstraction layer
