@@ -1,6 +1,7 @@
 <?php
 define('SCRIPT', $_SERVER['SCRIPT_NAME']);
 define('REQUEST', $_SERVER['REQUEST_URI']);
+define('PORT', $_SERVER['SERVER_PORT']);
 $v = array();
 
 $stat = array();
@@ -24,7 +25,9 @@ if ($url == '') $url = '/';
 // $u can be either `/test` or `test`.
 function URL($u) {
 	while ($u[0] == '/') $u = substr($u, 1, strlen($u) - 1);
-	return substr(SCRIPT, 0, strrpos(SCRIPT, '/') + 1) . $u;
+	$u = substr(SCRIPT, 0, strrpos(SCRIPT, '/') + 1) . $u;
+	return 'http://'. $_SERVER['SERVER_NAME'].
+		((PORT == '80')? '':':'.PORT).$u;
 }
 
 function r($s, $b, $h) {
