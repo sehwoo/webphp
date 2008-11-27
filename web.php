@@ -1,8 +1,8 @@
 <?php
 $s = $_SERVER;
 $v = array();
-
 $stat = array();
+
 $stat[200] = '200 OK';
 $stat[301] = '301 Moved Permanently';
 $stat[302] = '302 Found';
@@ -17,16 +17,17 @@ $stat[500] = '500 Internal Server Error';
 $stat[501] = '501 Method Not Implemented';
 
 $url = substr($s['REQUEST_URI'], strrpos($s['SCRIPT_NAME'], '/'));
-while (substr($url, -1) == '/') $url = substr($url, 0, -1);
+while ($url[-1] == '/') $url = substr($url, 0, -1);
 if ($url == '') $url = '/';
 
 // $u can be either `/test` or `test`.
 function URL($u) {
+	global $s;
 	while ($u[0] == '/') $u = substr($u, 1, strlen($u) - 1);
-	$u = substr($s['SCRIPT_NAME'], 0, 
+	$u = substr($s['SCRIPT_NAME'], 0,
 		strrpos($s['SCRIPT_NAME'], '/') + 1) . $u;
-	return 'http://'. $_SERVER['SERVER_NAME'].
-		((PORT == '80')? '':':'.PORT).$u;
+	return 'http://'. $s['SERVER_NAME'].
+		(($s['SERVER_PORT'] == '80')? '':':'.$s['SERVER_PORT']).$u;
 }
 
 function r($s, $b, $h) {
@@ -43,6 +44,8 @@ function redirect($l) {
 }
 
 function _render($yield, $_l = 'layout') {
+	global $v;
+	foreach ($v as $_k => $_v) $$_k = $_v;
 	if (is_string($_l))
 		if (file_exists($f = 'views/'. $_l)) include $f;
 		elseif (file_exists($f = 'views/'. $_l .'.php')) include $f;
@@ -53,8 +56,8 @@ function _render($yield, $_l = 'layout') {
 // Layouts must be in the `views/` directory.
 function render($_f, $_l = 'layout') {
 	global $v;
-	ob_start();
 	foreach ($v as $_k => $_v) $$_k = $_v;
+	ob_start();
 	include 'views/'. trim($_f) .'.php';
 	_render(ob_get_clean(), $_l);
 }
