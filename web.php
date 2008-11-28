@@ -17,7 +17,7 @@ $stat[500] = '500 Internal Server Error';
 $stat[501] = '501 Method Not Implemented';
 
 $url = substr($s['REQUEST_URI'], strrpos($s['SCRIPT_NAME'], '/'));
-while ($url[-1] == '/') $url = substr($url, 0, -1);
+while (substr($url, -1) == '/') $url = substr($url, 0, -1);
 if ($url == '') $url = '/';
 
 // $u can be either `/test` or `test`.
