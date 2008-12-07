@@ -1,9 +1,10 @@
 <?php
-$s = $_SERVER;
+$_S = &$_SERVER;
 $v = array();
 $stat = array();
 
 $stat[200] = '200 OK';
+$stat[204] = '204 No Content';
 $stat[301] = '301 Moved Permanently';
 $stat[302] = '302 Found';
 $stat[304] = '304 Not Modified';
@@ -16,18 +17,19 @@ $stat[410] = '410 Gone';
 $stat[500] = '500 Internal Server Error';
 $stat[501] = '501 Method Not Implemented';
 
-$url = substr($s['REQUEST_URI'], strrpos($s['SCRIPT_NAME'], '/'));
+$url = substr($_S['REQUEST_URI'], strrpos($_S['SCRIPT_NAME'], '/'));
 while (substr($url, -1) == '/') $url = substr($url, 0, -1);
 if ($url == '') $url = '/';
 
 // $u can be either `/test` or `test`.
 function URL($u) {
-	global $s;
+	global $_S;
 	while ($u[0] == '/') $u = substr($u, 1, strlen($u) - 1);
-	$u = substr($s['SCRIPT_NAME'], 0,
-		strrpos($s['SCRIPT_NAME'], '/') + 1) . $u;
-	return 'http://'. $s['SERVER_NAME'].
-		(($s['SERVER_PORT'] == '80')? '':':'.$s['SERVER_PORT']).$u;
+	$u = substr($_S['SCRIPT_NAME'], 0,
+		strrpos($_S['SCRIPT_NAME'], '/') + 1) . $u;
+	return 'http://'. $_S['SERVER_NAME'].
+		(($_S['SERVER_PORT'] == '80')?
+		'':':'. $_S['SERVER_PORT']) . $u;
 }
 
 function r($s, $b, $h) {
@@ -62,34 +64,32 @@ function render($_f, $_l = 'layout') {
 	_render(ob_get_clean(), $_l);
 }
 
-// Prepares string for url regex
-function prep_reg($s) {
-	return '/^'. str_replace('/', '\/', $s) .'$/';
-}
-
 // Runs the method in the specified controller
 function serve($c, $m, $a = array(), $e = TRUE) {
 	// $c, $m, $a, $e = controller, GET or POST, matches, eval?
 	// $e = TRUE or FALSE. TRUE => evals the statement
 	if (($m = strtolower($m)) == 'post') $a[] = '$_POST';
 	$s = $c .'::'. $m .'('. join(',', $a) .');';
-	if ($e == TRUE) eval($s);
-	return $s;
+	if (method_exists($c, $m))
+		if ($e == TRUE) eval($s);
+		else return $s;
+	else r(501, $stat[501]);
 }
 
 // This matches the URL and runs the appropriate controller's method
 function run($urls) {
-	global $url;
+	global $url, $_S;
 
 	foreach ($urls as $r => $c) {
 		// $r, $c, $m = route, controller, matches
-		preg_match($r = prep_reg($r), $url, $m);
+		preg_match('/^'.str_replace('/', '\/', $r).'$/', $url, $m);
 
 		if (count($m) > 0) {
-			// $m includes the url that it matches, we dislike
-			array_shift($m);
+			array_shift($m); // Rid $m[0] (the matching URL)
 			foreach ($m as &$i) $i = '"'. $i .'"';
-			serve($c, (count($_POST) == 0)? 'get':'post', $m);
+			serve($c, ($_S['REQUEST_METHOD'] ==
+				'GET' or 'POST' or 'DELETE' or 'PUT')?
+				$_S['REQUEST_METHOD']:'GET', $m);
 			return;
 		} // else it isn't a match so go to the next item in array
 	}
@@ -97,4 +97,3 @@ function run($urls) {
 	die('not found');
 }
 
-?>
