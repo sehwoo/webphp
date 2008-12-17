@@ -87,9 +87,9 @@ function run($urls) {
 		if (count($m) > 0) {
 			array_shift($m); // Rid $m[0] (the matching URL)
 			foreach ($m as &$i) $i = '"'. $i .'"';
-			serve($c, ($_S['REQUEST_METHOD'] ==
-				'GET' or 'POST' or 'DELETE' or 'PUT')?
-				$_S['REQUEST_METHOD']:'GET', $m);
+			serve($c, (in_array($_S['REQUEST_METHOD'], array(
+				'POST', 'GET', 'DELETE', 'PUT'))?
+				$_S['REQUEST_METHOD']:'GET'), $m);
 			return;
 		} // else it isn't a match so go to the next item in array
 	}
